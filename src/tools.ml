@@ -6,7 +6,7 @@ let clone_nodes (gr:'a graph) = n_fold gr new_node empty_graph
 
 
 let gmap (gr:'a graph) f = e_fold gr (fun acu (arc:'a arc) -> new_arc acu {src = arc.src; tgt = arc.tgt; lbl = (f arc.lbl)} ) (clone_nodes gr)
-(*val e_fold: 'a graph -> ('b -> 'a arc -> 'b) -> 'b -> 'b*)
+(*val e_fold: 'a graph -> ('b -> 'a arc -> 'b) -> 'b -> 'b*) (** TODO : traiter le cas ou le graphe est vide **) 
 
 (**)
 (*
