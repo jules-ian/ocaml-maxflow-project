@@ -9,6 +9,8 @@ let gmap (gr:'a graph) f = e_fold gr (fun acu (arc:'a arc) -> new_arc acu {src =
 (*val e_fold: 'a graph -> ('b -> 'a arc -> 'b) -> 'b -> 'b*) (** TODO : traiter le cas ou le graphe est vide **) 
 
 (**)
-(*
-let add_arc gr id1 id2 a = 
-*)
+
+let add_arc gr id1 id2 a = match find_arc gr id1 id2 with
+  | None -> new_arc gr {src = id1; tgt = id2; lbl = a} 
+  | Some x -> new_arc gr {src = id1; tgt = id2; lbl = a + x.lbl}  (*"If the arc already exists, its label is replaced by lbl. "*)
+
