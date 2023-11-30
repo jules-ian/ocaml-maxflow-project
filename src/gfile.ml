@@ -1,6 +1,6 @@
 open Graph
 open Printf
-    
+
 type path = string
 
 (* Format of text files:
@@ -30,7 +30,7 @@ let compute_y id =
   let sgn = if delta mod 2 = 0 then -1 else 1 in
 
   300 + sgn * (delta / 2) * 100
-  
+
 
 let write_file path graph =
 
@@ -46,9 +46,9 @@ let write_file path graph =
 
   (* Write all arcs *)
   let _ = e_fold graph (fun count arc -> fprintf ff "e %d %d %d %s\n" arc.src arc.tgt count arc.lbl ; count + 1) 0 in
-  
+
   fprintf ff "\n%% End of graph\n" ;
-  
+
   close_out ff ;
   ()
 
@@ -77,6 +77,32 @@ let read_comment graph line =
   with _ ->
     Printf.printf "Unknown line:\n%s\n%!" line ;
     failwith "from_file"
+
+
+let export gr = 
+  let debut = 
+    "digraph finite_state_machine {\n
+  fontname=\"Helvetica,Arial,sans-serif\"\n
+  node [fontname=\"Helvetica,Arial,sans-serif\"]\n
+  edge [fontname=\"Helvetica,Arial,sans-serif\"]\n
+  rankdir=LR;\n
+  node [shape = circle];\n"
+
+  in
+
+  let milieu = e_fold gr (fun acu (arc:'a arc) -> acu ^ string_of_int(arc.src) ^ "->" ^ string_of_int(arc.tgt)^ "[label=\"" ^ arc.lbl ^"\"];\n") "" 
+  (*e_fold gr (fun acu (arc:'a arc) -> new_arc acu {src = arc.src; tgt = arc.tgt; lbl = (f arc.lbl)} ) (clone_nodes gr)*)
+  in 
+  let fin = " }" 
+  in 
+
+  debut ^ (milieu ^ fin) 
+
+(*
+   trop nul ce mec
+   *)
+(* Il est ou le main ah j'ai *)
+
 
 let from_file path =
 
@@ -108,7 +134,7 @@ let from_file path =
   in
 
   let final_graph = loop empty_graph in
-  
+
   close_in infile ;
   final_graph
-  
+

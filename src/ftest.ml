@@ -1,5 +1,5 @@
 open Gfile
-open Tools
+(* open Tools*)
 
 let () =
 
@@ -15,8 +15,7 @@ let () =
       exit 0
     end ;
 
-
-  (* Arguments are : infile(1) source-id(2) sink-id(3) outfile(4) *)
+  (* Arguments are : infile(1) source-id(2) sink-id(3) outfile(4) *) 
 
   let infile = Sys.argv.(1)
   and outfile = Sys.argv.(4)
@@ -29,10 +28,11 @@ let () =
   (* Open file *)
   let graph = from_file infile in
 
-  (*let graphClone = clone_nodes graph in*)
-  let graphMapArcs = gmap graph (fun _ -> "s") in 
+  (*let graphClone = clone_nodes graph in*) 
+  let graphDot = export graph in 
   (* Rewrite the graph that has been read. *)
-  let () = write_file outfile graphMapArcs in
+  let () = Printf.printf "%s %!" graphDot in 
+  let () = write_file outfile graph in 
 
 
   ()  
