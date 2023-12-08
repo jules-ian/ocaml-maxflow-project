@@ -1,4 +1,6 @@
 open Gfile
+open Tools
+open FordFulkerson
 (* open Tools*)
 
 let () =
@@ -30,6 +32,11 @@ let () =
 
   (*let graphClone = clone_nodes graph in*) 
   let graphDot = export graph in 
+  let path_test = find_path (gmap (from_file "graphs/graph11.txt") int_of_string) [] 0 11 in
+  let () = Printf.printf "---------------\n" in 
+  let () = print_int_list_option path_test in 
+  let () = Printf.printf "---------------\n" in 
+
   (* Rewrite the graph that has been read. *)
   let () = Printf.printf "%s %!" graphDot in 
   let () = write_file outfile graph in 
