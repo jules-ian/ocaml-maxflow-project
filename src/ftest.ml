@@ -32,21 +32,28 @@ let () =
 
   (*let graphClone = clone_nodes graph in*) 
   let graphDot = export graph in 
-  let path_test = find_path (gmap (from_file "graphs/graph11.txt") int_of_string) [] 0 11 in
+  let path_test = find_path (gmap (from_file "graphs/graph12.txt") int_of_string) [] 0 3  in
   let path_test_rev = match path_test with
-  |None -> None
-  |Some p -> Some (List.rev p)
+    |None -> None
+    |Some p -> Some (List.rev p)
   in
+
+
   (*find_path*)
   let () = Printf.printf "------Test find_path---------\n" in 
   let () = print_int_list_option path_test_rev in 
   let () = Printf.printf "---------------\n" in 
 
-  
+
 
   (*flot_possible*)
   let () = Printf.printf "------Test flot_possible---------\n" in 
-  let () = print_int (flot_possible (gmap (from_file "graphs/graph11.txt") int_of_string) (path_test_rev)) in 
+  let () = print_int (flot_possible (gmap (from_file "graphs/graph12.txt") int_of_string) (path_test_rev)) in 
+  let () = Printf.printf "---------------\n" in 
+
+  (*find_bottleneck*)
+  let () = Printf.printf "------Test find_bottleneck---------\n" in 
+  let () = print_int_arc_option (find_bottleneck (gmap (from_file "graphs/graph12.txt") int_of_string) (path_test_rev)) in 
   let () = Printf.printf "---------------\n" in 
 
   (* Rewrite the graph that has been read. *)

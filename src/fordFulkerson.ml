@@ -3,6 +3,9 @@ open Graph
 (* A path is a list of nodes. *)
 type path = id list
 
+let get_lbl arc = match arc with
+|None -> -1
+|Some a -> a.lbl
 
 
 
@@ -42,7 +45,7 @@ let find_path gr forbidden src dest =
     
     (*fonction pour trouver le label d'un arc*)
     let label_arc gr s1 s2 = match find_arc gr s1 s2 with
-    |None -> -1
+    |None -> -1  (* NE DOIT JAMAIS ARRIVER car ça voudrait dire que le chemin n'est pas un chemin -> failwith*)
     |Some a -> a.lbl
     in 
     let rec find_min gr chemin acc = match chemin with
@@ -57,8 +60,29 @@ let find_path gr forbidden src dest =
     match chemin with 
     |None -> -1
     |Some c -> find_min gr c max_int
+
+    (* 2e version de flot possible où on revoie l'arc qui fait goulot d'étranglement, on peut ainsi récupérer directement sa valeur et le supprimer*)
     
+    let find_bottleneck gr chemin = 
     
+      (*fonction pour trouver le label d'un arc*)
+      let label_arc gr s1 s2 = match find_arc gr s1 s2 with
+      |None -> -1
+      |Some a -> a.lbl
+      in 
+      let rec find_min gr chemin (acc: 'a arc option) = match chemin with (* acc est un arc *)
+      |[] -> acc
+      |[_] -> acc
+      |x::y::xs -> let label_arc_value = label_arc gr x y in
+      begin match ((label_arc_value) < (get_lbl acc)) with 
+        |false -> find_min gr (y::xs) acc
+        |true -> find_min gr (y::xs) (find_arc gr x y)
+      end
+      in
+      let arc_max = {src = 0; tgt = 0; lbl = max_int} in (* definition de l'arc max pour trouver le minimum *)
+      match chemin with 
+      |None -> None
+      |Some c ->  (find_min gr c (Some arc_max))
     
   
 

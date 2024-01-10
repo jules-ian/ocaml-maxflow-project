@@ -11,3 +11,4 @@ type path = id list
 *)
 val find_path: int graph -> id list -> id -> id -> path option  
 val flot_possible: int graph -> path option -> int
+val find_bottleneck: int graph -> path option -> int arc option
