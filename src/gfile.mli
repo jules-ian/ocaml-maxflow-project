@@ -2,7 +2,7 @@
  * Write a graph to a file. *)
 
 open Graph
-
+(*C'EST LE PATH LE CHEMIN DE FICHIER ET PAS LE PATH CHEMIN DE NODE *facepalm* *)
 type path = string
 
 (* Values are read as strings. *)
