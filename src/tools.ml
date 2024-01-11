@@ -1,6 +1,9 @@
 (* Yes, we have to repeat open Graph. *)
 open Graph
 
+(* A path is a list of nodes. *)
+type path = id list
+
 (* assert false is of type ∀α.α, so the type-checker is happy. *)
 let clone_nodes (gr:'a graph) = n_fold gr new_node empty_graph
 
@@ -35,5 +38,12 @@ let add_arc gr id1 id2 a = match find_arc gr id1 id2 with
   | Some x -> new_arc gr {src = id1; tgt = id2; lbl = a + x.lbl}  (*"If the arc already exists, its label is replaced by lbl. "*)
 
 
-(* TODO : faire fonction de maj des arcs 
-*)
+(* fct qui verifie si un arc est dans un path donné *)
+
+let rec in_path path arc = match path with 
+|[] -> false
+|[_] -> false
+|first::next::rest -> if (arc.src = first && arc.tgt = next) then 
+  true 
+else 
+  in_path (next::rest) arc

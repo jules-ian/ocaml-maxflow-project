@@ -1,7 +1,5 @@
 open Graph
-
-(* A path is a list of nodes. *)
-type path = id list
+open Tools
 
 let get_lbl arc = match arc with
 |None -> -1
@@ -84,5 +82,26 @@ let find_path gr forbidden src dest =
       |None -> None
       |Some c ->  (find_min gr c (Some arc_max))
     
+  (* Function to apply to every arc of the graph : *)
+  let f path flow arc = if in_path path arc then
+    (if arc.lbl < flow then 
+      None
+    else
+      Some {src = arc.src; tgt = arc.tgt; lbl = (arc.lbl - flow)})
+    else 
+      Some arc
   
+
+(* Etapes suivantes :
+      Faire en boucle : 
+      - DFS 
+      - identifier le goulot d'étranglement
+      - ajouter le flot correspondant à tous les arcs du path et retirer le goulot 
+jusqu'a ce qu'aucun chemin ne soit trouvé -> graphe de flot max
+*)
+let rec ford_fulkerson gr src dest = match find_path gr [] src dest with
+|None -> 0
+|Some path -> let flow = flot_possible gr (Some path) in (flow + (ford_fulkerson (gmap gr (f path flow)) src dest))
+
+
 
