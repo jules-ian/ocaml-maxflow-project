@@ -2,10 +2,10 @@ open Graph
 open Tools
 
 let get_lbl arc = match arc with
-|None -> -1
-|Some a -> a.lbl
+  |None -> -1
+  |Some a -> a.lbl
 
-
+(*On suppose que le graphe de base il n'y a pas d'arc de label <= 0*)
 
 (* find_path gr forbidden id1 id2 
  *   returns None if no path can be found.
@@ -31,77 +31,95 @@ let find_path gr forbidden src dest =
   in
   match src with
   |node when node = dest -> Some [src]
-  |src -> (explore gr forbidden src dest [src])
+  |src -> rev_path (explore gr forbidden src dest [src])
 
-  (*TODO : Reverse le PATH ;-; *)
+(*TODO : Reverse le PATH ;-; *)
 (*Problème actuel : Transformer un path (=String)(UPDATE: QUIPROQUO DANS MA TETE ENTRE 2 PATHS /home... et chemin graphe;; On annule tout) en int list*) (* je la fait en global parce que je sens qu'on va en avoir besoin ailleur aussi*)
-    (* Le but est d'isoler tous les int du path*)
-    
-  (* Maintenant qu'on a peut trouver un chemin du puit vers la source, il faut trouver combien de flot on peut rajouter sur ce chemin *)
-  (* Je pense qu'il faut donc faire un algo qui à partir d'un chemin (int list?) (plutot path option) retourne le label minimum des arcs traversé *)
-  let flot_possible gr chemin = 
-    
-    (*fonction pour trouver le label d'un arc*)
-    let label_arc gr s1 s2 = match find_arc gr s1 s2 with
-    |None -> -1  (* NE DOIT JAMAIS ARRIVER car ça voudrait dire que le chemin n'est pas un chemin -> failwith*)
-    |Some a -> a.lbl
-    in 
-    let rec find_min gr chemin acc = match chemin with
+(* Le but est d'isoler tous les int du path*)
+
+(* Maintenant qu'on a peut trouver un chemin du puit vers la source, il faut trouver combien de flot on peut rajouter sur ce chemin *)
+(* Je pense qu'il faut donc faire un algo qui à partir d'un chemin (int list?) (plutot path option) retourne le label minimum des arcs traversé *)
+let flot_possible gr chemin = 
+
+
+
+  let rec find_min gr chemin acc = match chemin with
     |[] -> acc
     |[_] -> acc
     |x::y::xs -> let label_arc_value = label_arc gr x y in
-    begin match ((label_arc_value) < acc) with 
-      |false -> find_min gr (y::xs) acc
-      |true -> find_min gr (y::xs) label_arc_value
-    end
-    in
-    match chemin with 
-    |None -> -1
-    |Some c -> find_min gr c max_int
+      begin match ((label_arc_value) < acc) with 
+        |false -> find_min gr (y::xs) acc
+        |true -> find_min gr (y::xs) label_arc_value
+      end
+  in
+  match chemin with 
+  |None -> -1
+  |Some c -> find_min gr c max_int
 
-    (* 2e version de flot possible où on revoie l'arc qui fait goulot d'étranglement, on peut ainsi récupérer directement sa valeur et le supprimer*)
-    
-    let find_bottleneck gr chemin = 
-    
-      (*fonction pour trouver le label d'un arc*)
-      let label_arc gr s1 s2 = match find_arc gr s1 s2 with
-      |None -> -1
-      |Some a -> a.lbl
-      in 
-      let rec find_min gr chemin (acc: 'a arc option) = match chemin with (* acc est un arc *)
-      |[] -> acc
-      |[_] -> acc
-      |x::y::xs -> let label_arc_value = label_arc gr x y in
+(* 2e version de flot possible où on revoie l'arc qui fait goulot d'étranglement, on peut ainsi récupérer directement sa valeur et le supprimer*)
+
+let find_bottleneck gr chemin = 
+
+
+
+
+  let rec find_min gr chemin (acc: 'a arc option) = match chemin with (* acc est un arc *)
+    |[] -> acc
+    |[_] -> acc
+    |x::y::xs -> let label_arc_value = label_arc gr x y in
       begin match ((label_arc_value) < (get_lbl acc)) with 
         |false -> find_min gr (y::xs) acc
         |true -> find_min gr (y::xs) (find_arc gr x y)
       end
-      in
-      let arc_max = {src = 0; tgt = 0; lbl = max_int} in (* definition de l'arc max pour trouver le minimum *)
-      match chemin with 
-      |None -> None
-      |Some c ->  (find_min gr c (Some arc_max))
-    
-  (* Function to apply to every arc of the graph : *)
-  let f path flow arc = if in_path path arc then
-    (if arc.lbl < flow then 
-      None
-    else
-      Some {src = arc.src; tgt = arc.tgt; lbl = (arc.lbl - flow)})
-    else 
-      Some arc
-  
+  in
+  let arc_max = {src = 0; tgt = 0; lbl = max_int} in (* definition de l'arc max pour trouver le minimum *)
+  match chemin with 
+  |None -> None
+  |Some c ->  (find_min gr c (Some arc_max))
+
+(* Update an arc with an increase in flow *)
+(* Function to apply to every arc of the graph : *)
+(* let update_arc path flow arc = if in_path path arc then
+   (if arc.lbl <= flow then 
+    None
+   else
+    Some {src = arc.src; tgt = arc.tgt; lbl = (arc.lbl - flow)})
+   else 
+    Some arc
+*)
+(* Remove flow to every arc.label of a graph *)
+let rec update_graph gr path flow = match path with
+  |[] -> gr 
+  |[_] -> gr
+  (*Je veux modifier l'arc dans le graphe, il faut donc connaître sa valeur de base de lbl*)
+  |x::y::xs -> let inter = ((label_arc gr x y) - flow) in 
+    match inter with
+    (*remove arc if 0*)
+    |0 -> update_graph (remove_arc gr x y) (y::xs) flow
+    (*update arc if >= 0 (should not be < 0) *)
+    |a when a > 0 -> update_graph (add_arc gr x y inter) (y::xs) flow
+    |a when a < 0 -> failwith(" problem update graph ")
+    |_ -> failwith ("to make compil happy")
 
 (* Etapes suivantes :
       Faire en boucle : 
-      - DFS 
-      - identifier le goulot d'étranglement
-      - ajouter le flot correspondant à tous les arcs du path et retirer le goulot 
-jusqu'a ce qu'aucun chemin ne soit trouvé -> graphe de flot max
+   - DFS 
+   - identifier le goulot d'étranglement
+   - ajouter le flot correspondant à tous les arcs du path et retirer le goulot 
+     jusqu'a ce qu'aucun chemin ne soit trouvé -> graphe de flot max
 *)
-let rec ford_fulkerson gr src dest = match find_path gr [] src dest with
-|None -> 0
-|Some path -> let flow = flot_possible gr (Some path) in (flow + (ford_fulkerson (gmap gr (f path flow)) src dest))
+let ford_fulkerson gr src dest = 
+  let rec loop gr src dest acc = match find_path gr [] src dest with
+    |None -> acc
+    |Some path -> let flow = flot_possible gr (Some path) in
+      loop  (update_graph gr path flow) src dest (acc+flow)
+
+  (*loop (gmap gr (update path flow)) src dest (acc+flow)*)
+  in
+  loop gr src dest 0
+
+
+
 
 
 
