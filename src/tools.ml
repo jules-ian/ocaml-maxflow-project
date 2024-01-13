@@ -63,4 +63,7 @@ let remove_arc gr s1 s2 = match find_arc gr s1 s2 with
   |Some a -> e_fold gr (fun acu (arc:'a arc) -> match arc==a with
       |true -> acu
       |false -> new_arc acu {src = arc.src; tgt = arc.tgt; lbl = arc.lbl} ) (clone_nodes gr)
-
+(*Same as add_arc but add value if already existed*)
+let change_arc gr id1 id2 value = match (find_arc gr id1 id2) with
+|None -> new_arc gr {src = id1; tgt = id2; lbl = value}
+|Some a -> new_arc gr {src = id1; tgt = id2; lbl = a.lbl + value}

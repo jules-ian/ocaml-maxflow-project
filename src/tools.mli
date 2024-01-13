@@ -15,3 +15,4 @@ val add_arc: int graph -> id -> id -> int -> int graph
 val in_path: path -> 'a arc -> bool
 val label_arc: int graph -> id -> id -> int
 val remove_arc: 'a graph -> id -> id -> 'a graph
+val change_arc:int graph -> id -> id -> int -> int graph

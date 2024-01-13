@@ -83,12 +83,15 @@ let rec update_graph gr path flow = match path with
   |[] -> gr 
   |[_] -> gr
   (*Je veux modifier l'arc dans le graphe, il faut donc connaître sa valeur de base de lbl*)
+  (*Je modifie l'arc de base, et je modifie l'arc dans l'autre sens pour garder une solution optimal*)
+  (* Inter c'est la valeur de l'arc à modifier *)
   |x::y::xs -> let inter = ((label_arc gr x y) - flow) in 
     match inter with
     (*remove arc if 0*)
-    |0 -> update_graph (remove_arc gr x y) (y::xs) flow
+    |0 -> update_graph (change_arc (remove_arc gr x y) y x flow) (y::xs) flow
     (*update arc if >= 0 (should not be < 0) *)
-    |a when a > 0 -> update_graph (add_arc gr x y inter) (y::xs) flow
+      
+    |a when a > 0 -> update_graph (change_arc (add_arc gr x y inter) y x flow) (y::xs) flow
     |a when a < 0 -> failwith(" problem update graph ")
     |_ -> failwith ("to make compil happy")
 
