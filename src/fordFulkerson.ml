@@ -24,7 +24,11 @@ let find_path gr forbidden src dest =
 
 
         |x -> List.fold_left (fun acc e -> begin match acc with (* explorer tous les suivants et on note le noeud précédent comme visité *)
-            |None -> explore gr (node::forbidden) e.tgt dest (e.tgt::pathacu)
+            |None -> (begin match (List.mem e.tgt forbidden) with
+            (*On vérifie que le prochain noeuf n'a pas déjà été visité dans mon chemin*)
+              |false -> explore gr (node::forbidden) e.tgt dest (e.tgt::pathacu)
+              |true -> None
+            end)
             |Some y -> Some y
           end) None x
       end
@@ -33,8 +37,8 @@ let find_path gr forbidden src dest =
   |node when node = dest -> Some [src]
   |src -> rev_path (explore gr forbidden src dest [src])
 
-(*TODO : Reverse le PATH ;-; *)
-(*Problème actuel : Transformer un path (=String)(UPDATE: QUIPROQUO DANS MA TETE ENTRE 2 PATHS /home... et chemin graphe;; On annule tout) en int list*) (* je la fait en global parce que je sens qu'on va en avoir besoin ailleur aussi*)
+
+
 (* Le but est d'isoler tous les int du path*)
 
 (* Maintenant qu'on a peut trouver un chemin du puit vers la source, il faut trouver combien de flot on peut rajouter sur ce chemin *)
@@ -72,16 +76,8 @@ let find_bottleneck gr chemin =
   |None -> None
   |Some c ->  (find_min gr c (Some arc_max))
 
-(* Update an arc with an increase in flow *)
-(* Function to apply to every arc of the graph : *)
-(* let update_arc path flow arc = if in_path path arc then
-   (if arc.lbl <= flow then 
-    None
-   else
-    Some {src = arc.src; tgt = arc.tgt; lbl = (arc.lbl - flow)})
-   else 
-    Some arc
-*)
+
+
 (* Remove flow to every arc.label of a graph *)
 let rec update_graph gr path flow = match path with
   |[] -> gr 
