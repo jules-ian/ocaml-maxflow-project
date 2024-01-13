@@ -1,4 +1,4 @@
-% Graph saved at Tue Nov 14 2023 14:50:14 GMT+0100 (heure normale d’Europe centrale)
+% Graph saved at Sat Jan 13 2024 22:28:56 GMT+0100 (Central European Standard Time)
 n 217 221 0
 n 403 214 1
 n 118 460 2
@@ -7,7 +7,6 @@ n 402 449 4
 n 245 286 5
 n 580 154 6
 n 448 57 7
-n 146 174 8
 n 453 305 9
 e 0 5 0 343
 e 5 0 1 343
@@ -23,8 +22,6 @@ e 3 6 10 433
 e 6 3 11 433
 e 4 5 12 1106
 e 5 4 13 1106
-e 8 0 14 464
-e 0 8 15 464
 e 7 1 16 811
 e 7 0 17 1435
 e 0 7 18 1435
