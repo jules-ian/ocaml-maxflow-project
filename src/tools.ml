@@ -37,9 +37,7 @@ let print_int_arc_option (arc_opt : int arc option) =
     Printf.printf "None\n"
 
 
-let add_arc gr id1 id2 a = match find_arc gr id1 id2 with
-  | None -> new_arc gr {src = id1; tgt = id2; lbl = a} 
-  | Some _ -> new_arc gr {src = id1; tgt = id2; lbl = a}  (*"If the arc already exists, its label is replaced by lbl. "*)
+let add_arc gr id1 id2 a = new_arc gr {src = id1; tgt = id2; lbl = a}  (*"If the arc already exists, its label is replaced by lbl. "*)
 
 
 (* fct qui verifie si un arc est dans un path donné *)

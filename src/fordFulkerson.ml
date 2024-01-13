@@ -41,8 +41,6 @@ let find_path gr forbidden src dest =
 (* Je pense qu'il faut donc faire un algo qui à partir d'un chemin (int list?) (plutot path option) retourne le label minimum des arcs traversé *)
 let flot_possible gr chemin = 
 
-
-
   let rec find_min gr chemin acc = match chemin with
     |[] -> acc
     |[_] -> acc
@@ -59,9 +57,6 @@ let flot_possible gr chemin =
 (* 2e version de flot possible où on revoie l'arc qui fait goulot d'étranglement, on peut ainsi récupérer directement sa valeur et le supprimer*)
 
 let find_bottleneck gr chemin = 
-
-
-
 
   let rec find_min gr chemin (acc: 'a arc option) = match chemin with (* acc est un arc *)
     |[] -> acc
@@ -108,7 +103,7 @@ let rec update_graph gr path flow = match path with
    - ajouter le flot correspondant à tous les arcs du path et retirer le goulot 
      jusqu'a ce qu'aucun chemin ne soit trouvé -> graphe de flot max
 *)
-let ford_fulkerson gr src dest = 
+let ford_fulkerson_flow gr src dest = 
   let rec loop gr src dest acc = match find_path gr [] src dest with
     |None -> acc
     |Some path -> let flow = flot_possible gr (Some path) in
@@ -117,6 +112,16 @@ let ford_fulkerson gr src dest =
   (*loop (gmap gr (update path flow)) src dest (acc+flow)*)
   in
   loop gr src dest 0
+
+  let ford_fulkerson_graph gr src dest = 
+    let rec loop gr src dest = match find_path gr [] src dest with
+      |None -> gr
+      |Some path -> let flow = flot_possible gr (Some path) in
+        loop  (update_graph gr path flow) src dest
+  
+    (*loop (gmap gr (update path flow)) src dest (acc+flow)*)
+    in
+    loop gr src dest
 
 
 

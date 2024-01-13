@@ -12,4 +12,5 @@ val flot_possible: int graph -> path option -> int
 val find_bottleneck: int graph -> path option -> int arc option
 (*val add_flow: int graph -> path -> int arc option -> int graph*)
 val update_graph: int graph -> path -> int -> int graph
-val ford_fulkerson: int graph -> id -> id -> int
+val ford_fulkerson_flow: int graph -> id -> id -> int
+val ford_fulkerson_graph: int graph -> id -> id -> int graph
