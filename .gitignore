@@ -1,4 +1,6 @@
 _build/
 outfile
+.vscode/
+*.svg
 *~
 *.exe
