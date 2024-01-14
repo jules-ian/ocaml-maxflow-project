@@ -2,12 +2,12 @@
 
 In this project, we developped a Ford Fulkerson algorithm to maximize the flow in a graph, in order to optimize our response in the event of a cyberattack (medium project).
 
-*Story* : Several OcamlCorp site have been targeted by cyber-attacks of various kinds.
+**Story** : *Several OcamlCorp site have been targeted by cyber-attacks of various kinds.
 Fortunately, the INSA Toulouse ClubInfo has "cyber security prodigies" in various fields and many other equally effective people. 
 Each site (called local in the rest of the project) can receive help from several people (depending on the criticality of the attack) specialized in the type of cyber-attack it has received (web, reverse, pwn, osint, misc, social-engineering...).
 Each person can only go to 1 local.
 Each person can have several specialties. (Except for Baptiste, who only works on the web).
-What is the configuration that allows us to send the most people from the club to work on resolving security flaws? 
+What is the configuration that allows us to send the most people from the club to work on resolving security flaws?*
 
 
 # Table of Contents
