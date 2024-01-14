@@ -34,12 +34,10 @@ type person = {
   skills: vuln list}
 
 
-(*TODO: Trouver une solution pour dire que "x" peut aller vers tel ou tel spécialité*)
 
-(*Pour l'instant on va juste supposé que un local = un problème, on s'occupera de renommer plus tard*)
-(*peut être faire un dico [(web,1),(rev,2),...] *)
 
-(*todo*)
+
+
 
 
 let id_sink l1 l2 = (List.length l1)+(List.length l2)+1
@@ -47,7 +45,7 @@ let id_sink l1 l2 = (List.length l1)+(List.length l2)+1
 (*l1 = liste_personne ; l2 = liste_locaux*)
 let create_graph l1 l2 = 
   (*méthode pour créer les nodes à partir d'une liste*)
-  (*à mettre dans tools*)
+  
   let rec create_nodes_from_list gr lx acc = match lx with
     |[] -> gr
     |_::xs -> create_nodes_from_list (new_node gr (acc)) xs (acc+1)
@@ -71,9 +69,9 @@ let create_src_to_member_edges gr l1 =
   loop gr l1 1
 (*
   -Chaque Node personne "émet" un arc vers les locaux où elle peut agir
-(* Todo, comment elle fait pour savoir? *)
+
 *)
-let rec create_personne_to_locaux_edges gr l1 l2 = 
+let rec create_person_to_locals_edges gr l1 l2 = 
   (*Si un local correspond à une des spécialités de la personne, on fait un arc avec*)
   let rec edge_if_specialites_contains_problem gr person skills local = match skills with 
 
@@ -92,7 +90,7 @@ let rec create_personne_to_locaux_edges gr l1 l2 =
 
   match l1 with 
   |[] -> gr
-  |z::zs -> create_personne_to_locaux_edges (loop_on_l2 gr z z.skills l2) zs l2
+  |z::zs -> create_person_to_locals_edges (loop_on_l2 gr z z.skills l2) zs l2
 
 
 
@@ -107,16 +105,14 @@ let rec create_local_to_sink_edges gr l1 l2acu l2 =
   |[]-> gr
   |y::ys -> create_local_to_sink_edges (add_arc gr y.idL (id_sink l1 l2) y.capacity) l1 ys l2
 
-(* FONCTION QUI FAIT TOUT*)
-let soupe_de_fonction l1 l2 = create_local_to_sink_edges (create_personne_to_locaux_edges (create_src_to_member_edges (create_graph l1 l2) l1) l1 l2) l1 l2 l2
+(* FONCTION qui crée tout le graphe *)
+let soupe_des_fonctions l1 l2 = create_local_to_sink_edges (create_person_to_locals_edges (create_src_to_member_edges (create_graph l1 l2) l1) l1 l2) l1 l2 l2
 (*
     Idée : on fait le FordFulkerson la dessus donc : 
     -Il y'a que 1 qui rentre dans une Personne donc elle ne peut choisir que un local
     -Il y'a que X qui sort du local donc elle ne peut avoir que X arc de personne entrante
     -En cherchant le flux max, on cherche à faire sortir le + de personne (du club). 
 
-  Le transformer en graphe résiduelle
-  Le mettre en input à notre Ford-Fulkerson
   *)
 
 
@@ -193,14 +189,16 @@ let rec localname_from_id id local_list = match local_list with
   |_::xs -> localname_from_id id xs
 
 
-(*On veut savoir, à partir du graphe d'écart final quelle membre du club sont dans quelle locaux, et par déduction, qui n'est pas parti) *)
+(*On veut savoir, à partir du graphe d'écart final quel membre du club est dans quelle local, et ceux qui ne sont pas partis) *)
 
 (*Il suffit de regarder tous les arcs partant d'un local vers un node qui n'est pas le puit (=les nodes des membres qui sont partis dans le local) 
   la destination est le membre et la source est le local où il est parti
 *)
+
+
 let show_position gr flow_max l1 l2 sinkid = 
   let () = Printf.printf "Le nombre de membre qui sont partis est de : %d\n" flow_max in
-
+  
   let rec loop_arc_target gr liste_arc = match liste_arc with
     |[] -> ()
     |y::ys -> begin match (y.tgt = sinkid) with
@@ -212,7 +210,11 @@ let show_position gr flow_max l1 l2 sinkid =
     |[] -> ()
     |x::xs -> loop_arc_target gr (out_arcs gr x.idL); loop_local gr xs sinkid
   in
-  ();loop_local gr l2 sinkid
+  let rec print_jobless_member gr out_arcs0 = match out_arcs0 with 
+  |[] -> ()
+  |x::xs -> Printf.printf "%s est resté au club \n" (username_from_id x.tgt l1); print_jobless_member gr xs
+  in 
+  (); loop_local gr l2 sinkid; print_jobless_member gr (out_arcs gr 0)
 
 
 

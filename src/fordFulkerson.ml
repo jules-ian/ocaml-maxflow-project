@@ -25,7 +25,7 @@ let find_path gr forbidden src dest =
 
         |x -> List.fold_left (fun acc e -> begin match acc with (* explorer tous les suivants et on note le noeud précédent comme visité *)
             |None -> (begin match (List.mem e.tgt forbidden) with
-            (*On vérifie que le prochain noeuf n'a pas déjà été visité dans mon chemin*)
+            (*On vérifie que le prochain noeud n'a pas déjà été visité dans mon chemin*)
               |false -> explore gr (node::forbidden) e.tgt dest (e.tgt::pathacu)
               |true -> None
             end)
@@ -39,7 +39,7 @@ let find_path gr forbidden src dest =
 
 
 
-(* Le but est d'isoler tous les int du path*)
+
 
 (* Maintenant qu'on a peut trouver un chemin du puit vers la source, il faut trouver combien de flot on peut rajouter sur ce chemin *)
 (* Je pense qu'il faut donc faire un algo qui à partir d'un chemin (int list?) (plutot path option) retourne le label minimum des arcs traversé *)
@@ -83,7 +83,7 @@ let rec update_graph gr path flow = match path with
   |[] -> gr 
   |[_] -> gr
   (*Je veux modifier l'arc dans le graphe, il faut donc connaître sa valeur de base de lbl*)
-  (*Je modifie l'arc de base, et je modifie l'arc dans l'autre sens pour garder une solution optimal*)
+  (*Je modifie l'arc de base, et je modifie l'arc dans l'autre sens pour avoir une solution optimal*)
   (* Inter c'est la valeur de l'arc à modifier *)
   |x::y::xs -> let inter = ((label_arc gr x y) - flow) in 
     match inter with
@@ -100,27 +100,30 @@ let rec update_graph gr path flow = match path with
    - DFS 
    - identifier le goulot d'étranglement
    - ajouter le flot correspondant à tous les arcs du path et retirer le goulot 
-     jusqu'a ce qu'aucun chemin ne soit trouvé -> graphe de flot max
+     jusqu'a ce qu'aucun chemin ne soit trouvé -> graphe d'écart final'
 *)
+
+(*renvoie le flow max (int)*)
 let ford_fulkerson_flow gr src dest = 
   let rec loop gr src dest acc = match find_path gr [] src dest with
     |None -> acc
     |Some path -> let flow = flot_possible gr (Some path) in
       loop  (update_graph gr path flow) src dest (acc+flow)
 
-  (*loop (gmap gr (update path flow)) src dest (acc+flow)*)
+  
   in
   loop gr src dest 0
-
-  let ford_fulkerson_graph gr src dest = 
-    let rec loop gr src dest = match find_path gr [] src dest with
-      |None -> gr
-      |Some path -> let flow = flot_possible gr (Some path) in
-        loop  (update_graph gr path flow) src dest
   
-    (*loop (gmap gr (update path flow)) src dest (acc+flow)*)
-    in
-    loop gr src dest
+(*renvoie le graph d'écart*)
+let ford_fulkerson_graph gr src dest = 
+  let rec loop gr src dest = match find_path gr [] src dest with
+    |None -> gr
+    |Some path -> let flow = flot_possible gr (Some path) in
+      loop  (update_graph gr path flow) src dest
+
+  
+  in
+  loop gr src dest
 
 
 

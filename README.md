@@ -1,20 +1,66 @@
-Base project for Ocaml project on Ford-Fulkerson. This project contains some simple configuration files to facilitate editing Ocaml in VSCode.
+# OcamlCorp Cybersecurity Project
 
-To use, you should install the *OCaml* extension in VSCode. Other extensions might work as well but make sure there is only one installed.
-Then open VSCode in the root directory of this repository (command line: `code path/to/ocaml-maxflow-project`).
+In this project, we developped a Ford Fulkerson algorithm to maximize the flow in a graph, in order to optimize our response in the event of a cyberattack (medium project).
 
-Features :
- - full compilation as VSCode build task (Ctrl+Shift+b)
- - highlights of compilation errors as you type
- - code completion
- - automatic indentation on file save
+*Story* : Several OcamlCorp site have been targeted by cyber-attacks of various kinds.
+Fortunately, the INSA Toulouse ClubInfo has "cyber security prodigies" in various fields and many other equally effective people. 
+Each site (called local in the rest of the project) can receive help from several people (depending on the criticality of the attack) specialized in the type of cyber-attack it has received (web, reverse, pwn, osint, misc, social-engineering...).
+Each person can only go to 1 local.
+Each person can have several specialties. (Except for Baptiste, who only works on the web).
+What is the configuration that allows us to send the most people from the club to work on resolving security flaws? 
 
 
-A makefile provides some useful commands:
- - `make build` to compile. This creates an ftest.native executable
- - `make demo` to run the `ftest` program with some arguments
- - `make format` to indent the entire project
- - `make edit` to open the project in VSCode
- - `make clean` to remove build artifacts
+# Table of Contents
 
-In case of trouble with the VSCode extension (e.g. the project does not build, there are strange mistakes), a common workaround is to (1) close vscode, (2) `make clean`, (3) `make build` and (4) reopen vscode (`make edit`).
+- [Project Structure](#project-structure)
+- [Usage](#usage)
+- [Example Input File](#example-input-file)
+- [Build and Run](#build-and-run)
+
+# Project Structure
+
+- `tools.ml`: Contains some data structures and functions which are used to perform miscellaneous tasks.
+- `fordFulkerson.ml`: Contains the data structures and functions used to perform the Ford Fulkerson algorithm.
+- `securityProblem.ml`: Contains the data structures and functions related to the OcamlCorp cybersecurity scenario.
+- `bipartite_example2.txt`: An example input file for the OcamlCorp scenario.
+
+# Usage
+
+To use this project, follow these steps:
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/jules-ian/ocaml-maxflow-project.git
+    ```bash
+
+2. Build the project:
+    ```bash
+    make
+    ```bash
+
+3. Watch the beautiful demo we made for you:
+    ```bash
+    make demo
+    ```bash
+
+4. Use the Ford Fulkerson algorithm on your graph :
+    ```bash
+    ./ftest.exe <path/to/your/graph.txt> <sourceNodeId> <sinkNodeId> <outputfile.txt>
+    ```bash
+
+# Example Input File
+
+The bipartite_example2.txt.txt file serves as an example input file. It contains some locals and people declarations with the following syntax : 
+
+```
+# this is a comment : People skills must not contain any number
+PersonName1, PersonSkillA, PersonSkillB
+PersonName2, PersonSkillA, PersonSkillC
+
+# this is another comment : The local capacity is an integer
+LocalName1, LocalVulnerabilityA, LocalCapacity1
+LocalName2, LocalVulnerabilityC, LocalCapacity2
+```
+
+you can test the bipartite matching algorithm with the provided example file with `make demo`

@@ -1,0 +1,17 @@
+
+
+Baptiste, Web
+Matis, SocialEngineering, Rev, Pwn
+Jules, Pwn
+Thomas, Web, Misc
+Vincent, Rezo
+Eric, Pwn, Rev, Misc
+Cléa, SocialEngineering, Rezo
+Heloise, Misc, Rezo
+Remi, Web, Rev
+
+
+GEI, Rev, 2
+GMM, Web, 1
+AlataOffice, Pwn, 4
+CSH, SocialEngineering, 3

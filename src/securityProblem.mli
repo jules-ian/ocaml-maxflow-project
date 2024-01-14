@@ -28,9 +28,9 @@ type person = {
 val id_sink: 'a list -> 'b list -> id
 val create_graph: 'a list -> 'b list -> 'c graph
 val create_src_to_member_edges: int graph -> person list -> int graph
-val create_personne_to_locaux_edges: int graph -> person list -> local list -> int graph
+val create_person_to_locals_edges: int graph -> person list -> local list -> int graph
 val create_local_to_sink_edges:  int graph -> 'a list -> local list -> 'b list -> int graph
-val soupe_de_fonction: person list -> local list -> int graph
+val soupe_des_fonctions: person list -> local list -> int graph
 val username_from_id: id -> person list -> string
 val localname_from_id: id -> local list -> string
 val show_position: int graph -> int -> person list -> local list -> int -> unit 

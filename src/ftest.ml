@@ -21,13 +21,15 @@ let () =
 
   (* Arguments are : infile(1) source-id(2) sink-id(3) outfile(4) *) 
 
-  (*let infile = Sys.argv.(1)*)
+  let infile = Sys.argv.(1) in
   let outfile = Sys.argv.(4)
 
   (* These command-line arguments are not used for the moment. *)
   and _source = int_of_string Sys.argv.(2)
   and _sink = int_of_string Sys.argv.(3)
   in
+
+(*
 
   (* Open file *)
   (*let graph1 = from_file infile in *)
@@ -48,28 +50,27 @@ let () =
   (*find_path*)
   let () = Printf.printf "------Test find_path---------\n" in 
   let () = print_int_list_option path_test in 
-  let () = Printf.printf "---------------\n" in 
+  let () = Printf.printf "\n" in 
 
 
 
   (*flot_possible*)
   let () = Printf.printf "------Test flot_possible---------\n" in 
   let () = print_int (flot_test) in 
-  let () = Printf.printf "---------------\n" in 
+  let () = Printf.printf "\n" in 
 
   (*find_bottleneck*)
   let () = Printf.printf "------Test find_bottleneck---------\n" in 
   let () = print_int_arc_option (find_bottleneck (gmap (graph2) int_of_string) (path_test) ) in 
-  let () = Printf.printf "---------------\n" in 
+  let () = Printf.printf "\n" in 
 
   (*remove_arc *)
-  let () = Printf.printf "------Test remove_arc---------\n" in 
   let removed_graph = remove_arc (gmap (from_file "graphs/graph11.txt") int_of_string) 3 2 in 
   let string_removed_graph = gmap (removed_graph) string_of_int in 
   (*let dot_graph = export string_removed_graph in
     let () = write_file outfile dot_graph in 
     let () = Printf.printf "%s %!" dot_graph in *)
-  let () = Printf.printf "---------------\n" in 
+  let () = Printf.printf "\n" in 
 
   (*update_graph*)
   let () = Printf.printf "\n------Test update_graph---------\n" in 
@@ -81,18 +82,20 @@ let () =
   let final_flow = ford_fulkerson_flow graph2_int src dest in 
   let () = Printf.printf "======= Max Flow : %d\n" final_flow in 
   let final_graph = ford_fulkerson_graph graph2_int src dest in 
-  let () = Printf.printf "======= Graph : \n" in 
+
 
   let final_graph_string = gmap final_graph string_of_int in 
   (*let dot_graph = export string_updated_graph in*)
+*)
+
 
   (*======================SECURITY PROBLEM=================================*)
   (*Security Problem Tests *)
   let () = Printf.printf "\n------ Tests Security Problem ---------\n" in 
-  let person_list, locals_list = read_ocamlcorp_data "graphs/bipartite_example1.txt" in
-  let graph_bipartite = soupe_de_fonction person_list locals_list in
-  let graph_bipartite_string = gmap graph_bipartite string_of_int in 
-
+  let person_list, locals_list = read_ocamlcorp_data "graphs/bipartite_example2.txt" in
+  let graph_bipartite = soupe_des_fonctions person_list locals_list in
+  (*let graph_bipartite_string = gmap graph_bipartite string_of_int in *)
+(*
   let () = let rec print_person_list pl = match pl with 
       |[] -> ()
       |x::xs -> Printf.printf "nom d'une personne : %s\n" x.nameP ; print_person_list xs
@@ -103,25 +106,31 @@ let () =
       |y::ys -> Printf.printf "nom d'un local : %s\n" y.nameL ; print_locals_list ys
     in print_locals_list locals_list
   in
-
+*)
   let () = Printf.printf "\n------Test Ford_Fulkerson_Security---------\n" in 
-  let final_flow_secu = ford_fulkerson_flow graph_bipartite 0 6 in 
+  let final_flow_secu = ford_fulkerson_flow graph_bipartite 0 14 in 
   let () = Printf.printf "======= Max Flow : %d\n" final_flow_secu in 
-  let final_graph_secu = ford_fulkerson_graph graph_bipartite 0 6 in 
-  let () = Printf.printf "======= Graph : \n" in 
-  let () = Printf.printf "=======Analyse des resultats Secu=======\n" in 
-  let () = show_position final_graph_secu final_flow_secu person_list locals_list 6 in
+  let final_graph_secu = ford_fulkerson_graph graph_bipartite 0 14 in 
+  let () = Printf.printf "=======Analyse des resultats Secu=======\n\n" in 
+  let () = show_position final_graph_secu final_flow_secu person_list locals_list 14 in
   let () = Printf.printf "========================================\n" in 
 
 
-  let final_graph_string_secu = gmap final_graph_secu string_of_int in 
+  (*let final_graph_string_secu = gmap final_graph_secu string_of_int in *)
+
+  let graph_before_ff = (gmap (from_file infile) int_of_string) in
+  let final_ff_graph = ford_fulkerson_graph graph_before_ff _source _sink in
+  let final_ff_flow = ford_fulkerson_flow graph_before_ff _source _sink in
+  let final_ff_graph_string = gmap final_ff_graph string_of_int in
+  let () = Printf.printf "Maximum flow in the graph %s : %d\n\n" infile final_ff_flow in
   (*======================================================================*)
   (*À Commenter / Decommenter en fonction du test voulu (=>Il faut malheuresement commenter toutes les variables unused aussi)*)
-  let () = write_file outfile string_removed_graph in 
+  (* let () = write_file outfile string_removed_graph in 
   let () = write_file outfile string_updated_graph in  
   let () = write_file outfile final_graph_string in
   let () = write_file outfile graph_bipartite_string in
-  let () = write_file outfile final_graph_string_secu in
+  *)
+  let () = write_file outfile final_ff_graph_string in
 
 
 

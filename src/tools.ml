@@ -60,7 +60,7 @@ let label_arc gr s1 s2 = match find_arc gr s1 s2 with
 let remove_arc gr s1 s2 = match find_arc gr s1 s2 with
   |None -> failwith("Not an existing arc in remove_arc") (* NE DOIT JAMAIS ARRIVER car ça voudrait dire que le chemin n'est pas un chemin -> failwith*)
   (*Seul manière de supprimer un arc c'est de supprimer tous les arcs, et de tous les rajouter sauf celui qu'on veut supprimer*)
-  |Some a -> e_fold gr (fun acu (arc:'a arc) -> match arc==a with
+  |Some a -> e_fold gr (fun acu (arc:'a arc) -> match arc=a with
       |true -> acu
       |false -> new_arc acu {src = arc.src; tgt = arc.tgt; lbl = arc.lbl} ) (clone_nodes gr)
 (*Same as add_arc but add value if already existed*)
