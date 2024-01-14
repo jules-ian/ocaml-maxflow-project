@@ -15,7 +15,6 @@ What is the configuration that allows us to send the most people from the club t
 - [Project Structure](#project-structure)
 - [Usage](#usage)
 - [Example Input File](#example-input-file)
-- [Build and Run](#build-and-run)
 
 # Project Structure
 
