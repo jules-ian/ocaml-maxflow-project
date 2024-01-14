@@ -124,12 +124,18 @@ let soupe_de_fonction l1 l2 = create_local_to_sink_edges (create_personne_to_loc
 
 
 
+(* Regular expression to match comment lines *)
+let comment_regex = Str.regexp "^#"
+
 (* Regular expression to match lines with person information *)
 let person_regex = Str.regexp "^\\([^,]+\\), \\([^,]+\\(, \\([^0-9,]+\\)\\)*\\)$"
 
 (* Regular expression to match lines with local information *)
 let local_regex = Str.regexp "^\\([^,]+\\), \\([^,]+\\), \\([0-9]+\\)$"
 
+
+(* Function to parse a line of person information *)
+let parse_comment line = Str.string_match comment_regex line 0 
 
 (* Function to parse a line of person information *)
 let parse_person line id =
@@ -157,21 +163,76 @@ let read_ocamlcorp_data file_name =
   let rec read_lines people locals id_acu =
     try
       let line = input_line ic in
-      match parse_person line id_acu with (* Iterate on people first because the first IDs are for people*)
-      | Some person -> read_lines (person :: people) locals (id_acu + 1)
-      | None ->
-        (match parse_local line id_acu with
-         | Some local -> read_lines people (local :: locals) (id_acu + 1)
-         | None -> read_lines people locals id_acu) (* Unreadable line : empty line, Comment line....*)
+      match parse_comment line with (* Skip line if it is a comment *)
+      |true -> read_lines people locals id_acu
+      |false -> (match parse_person line id_acu with (* Iterate on people first because the first IDs are for people*)
+          | Some person -> read_lines (person :: people) locals (id_acu + 1)
+          | None ->
+            (match parse_local line id_acu with
+             | Some local -> read_lines people (local :: locals) (id_acu + 1)
+             | None -> read_lines people locals id_acu)) (* Unreadable line : empty line, Comment line....*)
     with End_of_file -> (List.rev people, List.rev locals)
   in
   let people, locals = read_lines [] [] 1 in
   close_in ic;
   people, locals 
 
-(* Example usage 
-   let () =
-   let locals, people = read_ocamlcorp_data "ocamlcorp_input.txt" in
-   Printf.printf "Locals: %s\n" (String.concat "; " (List.map (fun l -> l.name) locals));
-   Printf.printf "People: %s\n" (String.concat "; " (List.map (fun p -> p.name) people))
+
+(* Analyse du résultat *)
+
+
+
+let rec username_from_id id people_list = match people_list with
+  |[] -> failwith("user not found")
+  |x::_ when x.idP = id -> x.nameP
+  |_::xs -> username_from_id id xs
+
+let rec localname_from_id id local_list = match local_list with
+  |[] -> failwith("local not found")
+  |x::_ when x.idL = id -> x.nameL
+  |_::xs -> localname_from_id id xs
+
+
+(*On veut savoir, à partir du graphe d'écart final quelle membre du club sont dans quelle locaux, et par déduction, qui n'est pas parti) *)
+
+(*Il suffit de regarder tous les arcs partant d'un local vers un node qui n'est pas le puit (=les nodes des membres qui sont partis dans le local) 
+  la destination est le membre et la source est le local où il est parti
 *)
+let show_position gr flow_max l1 l2 sinkid = 
+  let () = Printf.printf "Le nombre de membre qui sont partis est de : %d\n" flow_max in
+
+  let rec loop_arc_target gr liste_arc = match liste_arc with
+    |[] -> ()
+    |y::ys -> begin match (y.tgt = sinkid) with
+        |true -> (); loop_arc_target gr ys
+        |false -> Printf.printf "%s est parti au local %s \n" (username_from_id y.tgt l1) (localname_from_id y.src l2) ; loop_arc_target gr ys
+      end
+  in 
+  let rec loop_local gr l2 sinkid = match l2 with 
+    |[] -> ()
+    |x::xs -> loop_arc_target gr (out_arcs gr x.idL); loop_local gr xs sinkid
+  in
+  ();loop_local gr l2 sinkid
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

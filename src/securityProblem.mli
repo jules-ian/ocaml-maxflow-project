@@ -31,8 +31,9 @@ val create_src_to_member_edges: int graph -> person list -> int graph
 val create_personne_to_locaux_edges: int graph -> person list -> local list -> int graph
 val create_local_to_sink_edges:  int graph -> 'a list -> local list -> 'b list -> int graph
 val soupe_de_fonction: person list -> local list -> int graph
-
-
+val username_from_id: id -> person list -> string
+val localname_from_id: id -> local list -> string
+val show_position: int graph -> int -> person list -> local list -> int -> unit 
 
 (* Regular expression to match lines with local information *)
 val local_regex : Str.regexp
@@ -47,4 +48,4 @@ val parse_local : string -> int -> local option
 val parse_person : string -> int -> person option
 
 (* Function to read the input file and create OcamlCorp data *)
-val read_ocamlcorp_data : string -> person list * local list
+val read_ocamlcorp_data : string -> person list * local list 

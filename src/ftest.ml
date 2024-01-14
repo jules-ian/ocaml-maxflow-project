@@ -89,7 +89,7 @@ let () =
   (*======================SECURITY PROBLEM=================================*)
   (*Security Problem Tests *)
   let () = Printf.printf "\n------ Tests Security Problem ---------\n" in 
-  let person_list, locals_list = read_ocamlcorp_data "graphs/bipartite_example.txt" in
+  let person_list, locals_list = read_ocamlcorp_data "graphs/bipartite_example1.txt" in
   let graph_bipartite = soupe_de_fonction person_list locals_list in
   let graph_bipartite_string = gmap graph_bipartite string_of_int in 
 
@@ -109,9 +109,13 @@ let () =
   let () = Printf.printf "======= Max Flow : %d\n" final_flow_secu in 
   let final_graph_secu = ford_fulkerson_graph graph_bipartite 0 6 in 
   let () = Printf.printf "======= Graph : \n" in 
+  let () = Printf.printf "=======Analyse des resultats Secu=======\n" in 
+  let () = show_position final_graph_secu final_flow_secu person_list locals_list 6 in
+  let () = Printf.printf "========================================\n" in 
+
 
   let final_graph_string_secu = gmap final_graph_secu string_of_int in 
-
+  (*======================================================================*)
   (*À Commenter / Decommenter en fonction du test voulu (=>Il faut malheuresement commenter toutes les variables unused aussi)*)
   let () = write_file outfile string_removed_graph in 
   let () = write_file outfile string_updated_graph in  
