@@ -31,22 +31,18 @@ To use this project, follow these steps:
 
    ```bash
    git clone https://github.com/jules-ian/ocaml-maxflow-project.git
-    ```bash
 
 2. Build the project:
     ```bash
     make
-    ```bash
 
 3. Watch the beautiful demo we made for you:
     ```bash
     make demo
-    ```bash
 
 4. Use the Ford Fulkerson algorithm on your graph :
     ```bash
     ./ftest.exe <path/to/your/graph.txt> <sourceNodeId> <sinkNodeId> <outputfile.txt>
-    ```bash
 
 # Example Input File
 
